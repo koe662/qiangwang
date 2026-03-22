@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Token Verify Entry{% endblock %}
+
+{% block content %}
+<section class="panel panel-wide">
+    <div class="eyebrow">TOKEN VERIFY SERVER</div>
+    <h1>Submit a token for verification</h1>
+    <p class="lead">
+        Token format: <code>base64(payload_json).base64(signature)</code>.
+        The service verifies the signature with its internal ECDSA key pair and exposes
+        the matching public key through <code>/api/pubkey</code>.
+    </p>
+
+    <form method="post" class="stack">
+        <label class="field-label" for="token">Token</label>
+        <textarea
+            id="token"
+            name="token"
+            class="token-input"
+            placeholder="Paste your token here"
+            required
+        >{{ token or '' }}</textarea>
+        <div class="button-row">
+            <button class="button button-primary" type="submit">Store token and continue</button>
+        </div>
+    </form>
+
+    {% if validation %}
+    <section class="status-card {{ 'status-valid' if validation.valid else 'status-invalid' }}">
+        <div class="status-title">
+            {{ 'Current cookie token is valid' if validation.valid else 'Current cookie token is invalid' }}
+        </div>
+        <div class="status-text">{{ validation.message }}</div>
+        {% if validation.username %}
+        <div class="status-meta">Parsed username: <strong>{{ validation.username }}</strong></div>
+        {% endif %}
+    </section>
+    {% endif %}
+
+    <section class="hint-card">
+        <h2>Available endpoints</h2>
+        <ul>
+            <li><code>GET /api/pubkey</code> returns the public key.</li>
+            <li><code>POST /api/verify</code> verifies a token directly.</li>
+            <li><code>POST /api/set_param</code> and <code>GET /api/train</code> keep the challenge training logic.</li>
+        </ul>
+    </section>
+</section>
+{% endblock %}
