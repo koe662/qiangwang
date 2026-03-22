@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Token 校验入口{% endblock %}
+
+{% block content %}
+<section class="panel panel-wide">
+    <div class="eyebrow">TOKEN VERIFY SERVER</div>
+    <h1>提交 token 进入校验流程</h1>
+    <p class="lead">
+        token 格式为 <code>base64(payload_json).base64(signature)</code>，
+        服务端会使用同目录中的 ECDSA 私钥对应公钥进行验签。
+    </p>
+
+    <form method="post" class="stack">
+        <label class="field-label" for="token">Token</label>
+        <textarea
+            id="token"
+            name="token"
+            class="token-input"
+            placeholder="在这里粘贴 token"
+            required
+        >{{ token or '' }}</textarea>
+        <div class="button-row">
+            <button class="button button-primary" type="submit">写入 Cookie 并访问</button>
+        </div>
+    </form>
+
+    {% if validation %}
+    <section class="status-card {{ 'status-valid' if validation.valid else 'status-invalid' }}">
+        <div class="status-title">
+            {{ '当前 Cookie 中的 token 有效' if validation.valid else '当前 Cookie 中的 token 无效' }}
+        </div>
+        <div class="status-text">{{ validation.message }}</div>
+        {% if validation.username %}
+        <div class="status-meta">解析用户名：<strong>{{ validation.username }}</strong></div>
+        {% endif %}
+    </section>
+    {% endif %}
+
+    <section class="hint-card">
+        <h2>已保留的题目接口</h2>
+        <ul>
+            <li><code>GET /api/pubkey</code> 返回公钥十六进制。</li>
+            <li><code>POST /api/verify</code> 可直接校验 token。</li>
+            <li><code>POST /api/set_param</code> 与 <code>GET /api/train</code> 保留原题逻辑。</li>
+        </ul>
+    </section>
+</section>
+{% endblock %}

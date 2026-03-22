@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}访客页面{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <div class="eyebrow">ACCESS LIMITED</div>
+    <h1>访客验证通过</h1>
+    <p class="lead">当前登录用户：<strong>{{ username }}</strong></p>
+    <div class="message-box">
+        token 签名是有效的，但当前用户不是管理员，因此跳转到了访客页。
+    </div>
+    <div class="button-row">
+        <a class="button button-secondary" href="{{ url_for('set_token') }}">重新提交 token</a>
+        <form method="post" action="{{ url_for('logout') }}">
+            <button class="button button-primary" type="submit">退出</button>
+        </form>
+    </div>
+</section>
+{% endblock %}
